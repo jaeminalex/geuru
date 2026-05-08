@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>그루 - 하루하루 나무처럼 성장하는 나</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    
+    <!-- Landing View -->
+    <div id="landing-view" class="active">
+        <header class="landing-header">
+            <div class="logo-container" style="padding: 0;">
+                <span style="font-size: 28px; line-height: 1;">🌳</span>
+                <span>그루</span>
+            </div>
+            <div class="auth-buttons">
+                <button class="btn-outline" id="btn-landing-login">로그인</button>
+                <button class="primary-btn" id="btn-landing-signup">회원가입</button>
+            </div>
+        </header>
+        
+        <div class="landing-hero">
+            <div class="hero-icon">🌳</div>
+            <h1>하루하루 나무처럼 성장하는 나, 그루</h1>
+            <p>미루는 습관을 줄이고, 작은 성취를 모아 나만의 단단한 일상을 만들어보세요.</p>
+            <button class="primary-btn" id="btn-start-now" style="font-size: 18px; padding: 16px 32px;">시작하기</button>
+        </div>
+        
+        <div class="features-section">
+            <div class="feature-card">
+                <i class="ph ph-clock"></i>
+                <h3>시간별 계획</h3>
+                <p>하루 24시간을 한눈에 파악하고, 중요한 일에 집중할 수 있도록 시간을 블록 단위로 관리하세요.</p>
+            </div>
+            <div class="feature-card">
+                <i class="ph ph-list-dashes"></i>
+                <h3>과업 세분화</h3>
+                <p>막막하고 큰 목표를 작고 실천 가능한 단위로 쪼개어 인지적 부담을 크게 줄여줍니다.</p>
+            </div>
+            <div class="feature-card">
+                <i class="ph ph-notebook"></i>
+                <h3>가이드형 회고</h3>
+                <p>하루를 마무리하며 부담 없이 작성할 수 있는 3가지 질문으로 긍정적인 자기 피드백을 기록하세요.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- App View -->
+    <div id="app-view">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <span style="font-size: 28px; line-height: 1;">🌳</span>
+                <span>그루</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-view="dashboard">
+                    <i class="ph ph-squares-four"></i>
+                    <span>대시보드</span>
+                </li>
+                <li class="nav-item" data-view="monthly">
+                    <i class="ph ph-calendar"></i>
+                    <span>월간 캘린더</span>
+                </li>
+                <li class="nav-item" data-view="weekly">
+                    <i class="ph ph-map-trifold"></i>
+                    <span>주간 로드맵</span>
+                </li>
+                <li class="nav-item" data-view="daily">
+                    <i class="ph ph-check-square-offset"></i>
+                    <span>일일 계획</span>
+                </li>
+                <li class="nav-item" data-view="diary">
+                    <i class="ph ph-notebook"></i>
+                    <span>일기</span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="title-area">
+                    <h1 id="page-title">대시보드</h1>
+                    <span id="current-date-display" class="date-badge">2026. 05. 07</span>
+                </div>
+                <div class="header-actions">
+                    <div class="user-session-container" id="user-session-container" style="display: flex; align-items: center; gap: 12px;">
+                        <span id="user-email-display" style="font-size: 16px; color: var(--text-primary); font-weight: 600;"></span>
+                        <button class="btn-outline" id="btn-logout" style="padding: 6px 12px; font-size: 13px;">로그아웃</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <section id="view-dashboard" class="view-section active">
+                <div class="grid-layout">
+                    <div class="card stat-card">
+                        <div class="stat-icon"><i class="ph ph-fire"></i></div>
+                        <div class="stat-info">
+                            <h3>연속 달성일</h3>
+                            <p>0 일</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon"><i class="ph ph-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h3>완료한 할 일</h3>
+                            <p>0 / 0</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon"><i class="ph ph-timer"></i></div>
+                        <div class="stat-info">
+                            <h3>딥 워크 시간</h3>
+                            <p>0시간 0분</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 24px;">
+                    <div class="card">
+                        <h3 style="margin-bottom: 16px; font-size: 18px;">최우선 과제 (대시보드 전용)</h3>
+                        <ul class="task-list" id="dashboard-task-list"></ul>
+                        <button class="primary-btn" id="btn-add-dash-task" style="width: 100%; margin-top: 16px; justify-content: center;"><i class="ph ph-plus"></i> 빠른 할 일 추가</button>
+                    </div>
+                    <div class="card">
+                        <h3 style="margin-bottom: 16px; font-size: 18px;">빠른 메모 (Quick Capture)</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                            갑자기 떠오른 생각이나 방해 요소가 있나요? 여기에 적어두고 잊어버리세요.
+                        </p>
+                        <textarea id="dashboard-quick-note" placeholder="생각 비우기..." style="width: 100%; height: 120px; padding: 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); resize: none; font-family: inherit; font-size: 15px; background-color: var(--bg-primary); outline: none;"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Monthly View -->
+            <section id="view-monthly" class="view-section">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="icon-btn" id="btn-prev-month"><i class="ph ph-caret-left"></i></button>
+                        <h2 id="calendar-month-title">2026년 5월</h2>
+                        <button class="icon-btn" id="btn-next-month"><i class="ph ph-caret-right"></i></button>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid">
+                        <div class="calendar-day-header">일</div>
+                        <div class="calendar-day-header">월</div>
+                        <div class="calendar-day-header">화</div>
+                        <div class="calendar-day-header">수</div>
+                        <div class="calendar-day-header">목</div>
+                        <div class="calendar-day-header">금</div>
+                        <div class="calendar-day-header">토</div>
+                        <!-- Cells rendered via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weekly View -->
+            <section id="view-weekly" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <p style="color: var(--text-secondary); font-size: 16px;">이번 주에 반드시 이뤄내야 할 핵심 목표들을 카드 형태로 추가하세요.</p>
+                    <button class="primary-btn" id="btn-add-weekly-goal"><i class="ph ph-plus"></i> 새 목표 추가</button>
+                </div>
+                <div class="weekly-grid" id="weekly-goals-grid">
+                    <!-- Cards rendered via JS -->
+                </div>
+            </section>
+
+            <!-- Daily View -->
+            <section id="view-daily" class="view-section">
+                <div class="planner-layout">
+                    <!-- Timeline (Left) -->
+                    <div class="timeline-container card">
+                        <div class="section-title">
+                            <span>일일 타임라인</span>
+                            <span style="font-size: 13px; color: var(--text-secondary); font-weight: normal;">* 할 일을 드래그하여 할당하세요</span>
+                        </div>
+                        <div class="timeline" id="daily-timeline">
+                            <!-- 06:00 ~ 24:00 Slots rendered via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Todo List (Right) -->
+                    <div class="todo-container">
+                        <!-- Weekly Widget inside Daily View -->
+                        <div class="card weekly-widget" style="margin-bottom: 24px; padding-bottom: 24px;">
+                            <h4>이번 주 핵심 목표 <button class="icon-btn" onclick="document.querySelector('[data-view=\'weekly\']').click()" style="font-size: 16px; padding: 2px;"><i class="ph ph-arrow-square-out"></i></button></h4>
+                            <ul class="weekly-widget-list" id="daily-weekly-widget-list">
+                                <!-- Rendered via JS -->
+                            </ul>
+                        </div>
+
+                        <!-- Unallocated Tasks -->
+                        <div class="card" style="flex: 1;">
+                            <div class="todo-header">
+                                <h3 class="section-title" style="margin-bottom: 0;">오늘 할 일 (미할당)</h3>
+                                <button class="primary-btn small-btn" id="btn-add-daily-task"><i class="ph ph-plus"></i> 추가</button>
+                            </div>
+                            <ul class="advanced-task-list" id="daily-task-list">
+                                <!-- Dynamic tasks will be loaded here -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Diary View -->
+            <section id="view-diary" class="view-section">
+                <div class="reflection-layout">
+                    <!-- Inner Tabs -->
+                    <div class="tab-navigation">
+                        <button class="tab-btn active" data-target="daily-reflection">오늘의 일기</button>
+                        <button class="tab-btn" data-target="weekly-reflection">주간 통계</button>
+                    </div>
+
+                    <!-- Daily Reflection -->
+                    <div id="daily-reflection" class="reflection-tab-content active">
+                        <div class="card" style="margin-bottom: 24px;">
+                            <h3 class="section-title">오늘 하루는 어땠나요?</h3>
+                            <div class="emotion-container">
+                                <button class="emotion-btn"><span class="emoji">😄</span><span class="emotion-label">최고야</span></button>
+                                <button class="emotion-btn"><span class="emoji">🙂</span><span class="emotion-label">좋았어</span></button>
+                                <button class="emotion-btn active"><span class="emoji">😐</span><span class="emotion-label">그저 그래</span></button>
+                                <button class="emotion-btn"><span class="emoji">😮‍💨</span><span class="emotion-label">지쳤어</span></button>
+                                <button class="emotion-btn"><span class="emoji">🤯</span><span class="emotion-label">과부하</span></button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="section-title">오늘의 회고</h3>
+                            
+                            <div class="question-group">
+                                <label>오늘 가장 먼저 완료한 일은?</label>
+                                <textarea id="ref-q1" placeholder="작은 성공이라도 적어보세요..."></textarea>
+                            </div>
+                            
+                            <div class="question-group">
+                                <label>진행이 어려웠던 이유는?</label>
+                                <textarea id="ref-q2" placeholder="어떤 방해 요소가 있었나요?"></textarea>
+                            </div>
+                            
+                            <div class="question-group">
+                                <label>내일의 나를 위한 한마디는?</label>
+                                <textarea id="ref-q3" placeholder="부담 갖지 말고 한 걸음씩..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Reflection -->
+                    <div id="weekly-reflection" class="reflection-tab-content">
+                        <div class="card">
+                            <h3 class="section-title">주간 완료율</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 32px; font-size: 15px;">지난 7일간의 집중도와 꾸준함 기록입니다. (추후 연동 예정)</p>
+                            
+                            <div class="chart-container">
+                                <div class="chart-bar-wrapper"><div class="chart-bar" style="height: 60%;"><span class="chart-value">60%</span></div><span class="chart-label">월</span></div>
+                                <div class="chart-bar-wrapper"><div class="chart-bar" style="height: 80%; background-color: var(--accent-green);"><span class="chart-value">80%</span></div><span class="chart-label">화</span></div>
+                                <div class="chart-bar-wrapper"><div class="chart-bar" style="height: 40%;"><span class="chart-value">40%</span></div><span class="chart-label">수</span></div>
+                                <div class="chart-bar-wrapper"><div class="chart-bar" style="height: 90%; background-color: var(--accent-green);"><span class="chart-value">90%</span></div><span class="chart-label">목</span></div>
+                                <div class="chart-bar-wrapper"><div class="chart-bar" style="height: 70%;"><span class="chart-value">70%</span></div><span class="chart-label">금</span></div>
+                                <div class="chart-bar-wrapper"><div class="chart-bar" style="height: 30%;"><span class="chart-value">30%</span></div><span class="chart-label">토</span></div>
+                                <div class="chart-bar-wrapper"><div class="chart-bar" style="height: 50%;"><span class="chart-value">50%</span></div><span class="chart-label">일</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div> <!-- /#app-view -->
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="auth-modal">
+        <div class="modal">
+            <button class="modal-close"><i class="ph ph-x"></i></button>
+            <h2 class="modal-title" id="auth-modal-title">로그인</h2>
+            <form class="auth-form">
+                <div class="form-group" id="group-nickname" style="display: none;">
+                    <label>별명 (Nickname)</label>
+                    <input type="text" id="auth-nickname" placeholder="나무늘보">
+                </div>
+                <div class="form-group">
+                    <label>이메일</label>
+                    <input type="email" id="auth-email" placeholder="example@email.com">
+                </div>
+                <div class="form-group">
+                    <label>비밀번호</label>
+                    <input type="password" id="auth-password" placeholder="••••••••">
+                </div>
+                <button type="button" class="primary-btn" id="btn-auth-submit" style="width: 100%; justify-content: center; margin-top: 12px;">계속하기</button>
+            </form>
+            <p style="text-align: center; margin-top: 16px; font-size: 14px; color: var(--text-secondary);">
+                계정이 없으신가요? <a href="#" id="toggle-auth-mode" style="color: var(--accent-green); text-decoration: none; cursor: pointer; font-weight: 600;">회원가입</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Task Breakdown Modal -->
+    <div class="modal-overlay" id="breakdown-modal">
+        <div class="modal" style="max-width: 500px;">
+            <button class="modal-close" id="btn-close-breakdown"><i class="ph ph-x"></i></button>
+            <h2 class="modal-title" style="margin-bottom: 16px; font-size: 20px; color: var(--text-secondary); text-align: left;">과제 세분화</h2>
+            
+            <input type="text" id="breakdown-main-title" class="inline-input" style="font-size: 24px; font-weight: 700; border-bottom: 2px solid var(--accent-green); border-radius: 0; padding-bottom: 8px; margin-bottom: 24px;" placeholder="메인 과제명">
+            
+            <ul id="breakdown-subtask-list" style="list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+                <!-- Subtasks loaded here -->
+            </ul>
+            
+            <button class="btn-outline" id="btn-add-subtask" style="width: 100%; justify-content: center; border-style: dashed; color: var(--text-secondary); margin-bottom: 12px;"><i class="ph ph-plus"></i> 세부 단계 추가</button>
+            <button class="primary-btn" id="btn-done-breakdown" style="width: 100%; justify-content: center; font-size: 16px;">완료 (닫기)</button>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
